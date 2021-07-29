@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/constants/style.dart';
 import 'package:frontend/controllers/menu_controller.dart';
-import 'package:frontend/pages/overview/overview.dart';
+import 'package:frontend/pages/login/login.dart';
 import 'package:frontend/widgets/side_menu.dart';
 import 'package:get/get.dart';
+
+import 'pages/main/main.dart';
 
 void main() {
   Get.put(MenuController());
@@ -17,7 +19,11 @@ class MyApp extends StatelessWidget {
       title: 'IonQC@SNU',
       theme: ThemeData.dark(),
       debugShowCheckedModeBanner: false,
-      home: Home(),
+      initialRoute: "/",
+      getPages: [
+        GetPage(name: '/', page: () => Home()),
+        GetPage(name: '/login', page: () => LoginPage())
+      ],
     );
   }
 }
@@ -25,15 +31,26 @@ class MyApp extends StatelessWidget {
 class Home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    var _width = MediaQuery.of(context).size.width;
+    var isMobile = _width <= 920;
     return Scaffold(
+      drawer: isMobile ? Drawer(child: SideMenu()) : null,
+      appBar: isMobile
+          ? AppBar(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+            )
+          : null,
+      extendBodyBehindAppBar: true,
       backgroundColor: primaryBackground,
-      body: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(child: SideMenu()),
-          Expanded(flex: 5, child: OverviewPage()),
-        ],
-      ),
+      body: isMobile
+          ? Main()
+          : Row(
+              children: [
+                Expanded(child: SideMenu()),
+                Expanded(flex: 5, child: Main()),
+              ],
+            ),
     );
   }
 }
